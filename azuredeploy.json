@@ -381,7 +381,7 @@
             "[resourceId('Microsoft.Web/Sites', parameters('ConsumerFunctionAppName'))]"
           ],
           "properties": {
-            "repoUrl": "https://github.com/stephgou/durable-functions-producer-consumer",
+            "repoUrl": "https://github.com/stephgou/integration-services",
             "branch": "master",
             "isManualIntegration": true,
             "isMercurial": false
@@ -507,7 +507,7 @@
             "[resourceId('Microsoft.Web/Sites', parameters('ProducerFunctionAppName'))]"
           ],
           "properties": {
-            "repoUrl": "https://github.com/Azure-Samples/durable-functions-producer-consumer",
+            "repoUrl": "https://github.com/stephgou/integration-services",
             "branch": "master",
             "isManualIntegration": true,
             "isMercurial": false
