@@ -162,8 +162,8 @@ namespace Producer.EventHubsKafka
 #if DEBUG
                             log.LogTrace($@"Posted message {messageToPost.MessageId} (Size: {messageToPost.Message.Length} bytes) in {retryCount} attempt(s)");
 #else
-                log.LogTrace($@"Posted message for with TestRunID '{messageToPost.Properties[@"TestRunId"]}' and MessageID '{messageToPost.Properties[@"MessageId"]}' in {retryCount} attempt(s)");
 #endif
+                            // extract from else endif - issue in compilation on Azure Web Site log.LogTrace($@"Posted message for with TestRunID '{messageToPost.Properties[@"TestRunId"]}' and MessageID '{messageToPost.Properties[@"MessageId"]}' in {retryCount} attempt(s)");
                         }
                     } while (retry);
                 }
