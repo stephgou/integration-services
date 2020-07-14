@@ -13,6 +13,11 @@ using Newtonsoft.Json.Linq;
 using Confluent.Kafka;
 using Newtonsoft.Json;
 
+//https://github.com/confluentinc/confluent-kafka-dotnet/issues/572
+//librdkafka dependency for ssl were not installed on the host.
+//Specifically the following files for 0.11.6 version of the library.
+
+
 namespace Producer.EventHubsKafka
 {
     public static class Functions
