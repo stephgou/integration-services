@@ -12,6 +12,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json.Linq;
 using Confluent.Kafka;
 using Newtonsoft.Json;
+using System.Runtime.InteropServices;
+using Producer.Helpers;
 
 //https://github.com/confluentinc/confluent-kafka-dotnet/issues/572
 //librdkafka dependency for ssl were not installed on the host.
@@ -23,12 +25,39 @@ namespace Producer.EventHubsKafka
 {
     public static class Functions
     {
+        [DllImport("kernel32", SetLastError = true)]
+        private static extern IntPtr LoadLibrary(string lpFileName);
+
         [FunctionName(nameof(PostToEventHubKafka))]
         public static async Task<HttpResponseMessage> PostToEventHubKafka(
             [HttpTrigger(AuthorizationLevel.Function, "post")] HttpRequestMessage request,
             [OrchestrationClient]DurableOrchestrationClient client,
             ILogger log)
         {
+
+            var is64 = IntPtr.Size == 8;
+            try
+            {
+                var baseUri = new Uri(Assembly.GetExecutingAssembly().GetName().CodeBase);
+                log.LogInformation(baseUri.LocalPath);
+
+                var baseDirectory = Path.GetDirectoryName(baseUri.LocalPath);
+                log.LogInformation(baseDirectory);
+
+                var parentDirectory = Helper.Left(baseDirectory, baseDirectory.Length - 3);
+                var resolvingDll = Path.Combine(parentDirectory, is64 ? "librdkafka\\x64\\librdkafka.dll" : "librdkafka\\x86\\librdkafka.dll");
+                log.LogInformation(resolvingDll);
+                LoadLibrary(resolvingDll);
+
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\zlib.dll" : "librdkafka\\x86\\zlib.dll"));
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\librdkafkacpp.dll" : "librdkafka\\x86\\librdkafkacpp.dll"));
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\libzstd.dll" : "librdkafka\\x86\\libzstd.dll"));
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\msvcp120.dll" : "librdkafka\\x86\\msvcp120.dll"));
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\msvcr120.dll" : "librdkafka\\x86\\msvcr120.dll"));
+            }
+            catch (Exception) { }
+
+
             var inputObject = JObject.Parse(await request.Content.ReadAsStringAsync());
             var numberOfMessagesPerPartition = inputObject.Value<int>(@"NumberOfMessagesPerPartition");
             var numberOfPartitions = Convert.ToInt32(Environment.GetEnvironmentVariable("EventHubKafkaPartitions"));

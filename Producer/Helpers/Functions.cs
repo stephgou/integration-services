@@ -41,7 +41,7 @@ namespace Producer.Helpers
                 var baseDirectory = Path.GetDirectoryName(baseUri.LocalPath);
                 log.LogInformation(baseDirectory);
 
-                var parentDirectory = Left(baseDirectory, baseDirectory.Length - 3);
+                var parentDirectory = Helper.Left(baseDirectory, baseDirectory.Length - 3);
                 var resolvingDll = Path.Combine(parentDirectory, is64 ? "librdkafka\\x64\\librdkafka.dll" : "librdkafka\\x86\\librdkafka.dll");
                 log.LogInformation(resolvingDll);
                 LoadLibrary(resolvingDll);
@@ -61,15 +61,5 @@ namespace Producer.Helpers
             return new OkObjectResult(responseMessage);
         }
 
-        private static string Left(this string value, int maxLength)
-        {
-            if (string.IsNullOrEmpty(value)) return value;
-            maxLength = Math.Abs(maxLength);
-
-            return (value.Length <= maxLength
-                   ? value
-                   : value.Substring(0, maxLength)
-                   );
-        }
     }
 }
