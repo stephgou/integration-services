@@ -45,15 +45,20 @@ namespace Producer.EventHubsKafka
                 log.LogInformation(baseDirectory);
 
                 var parentDirectory = Helper.Left(baseDirectory, baseDirectory.Length - 3);
-                var resolvingDll = Path.Combine(parentDirectory, is64 ? "librdkafka\\x64\\librdkafka.dll" : "librdkafka\\x86\\librdkafka.dll");
-                log.LogInformation(resolvingDll);
-                LoadLibrary(resolvingDll);
+
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\msvcp120.dll" : "librdkafka\\x86\\msvcp120.dll"));
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\msvcr120.dll" : "librdkafka\\x86\\msvcr120.dll"));
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\secur32.dll" : "librdkafka\\x86\\msvcr120.dll"));
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\ws2_32.dll" : "librdkafka\\x86\\msvcp120.dll"));
+                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\crypt32.dll" : "librdkafka\\x86\\msvcp120.dll"));
 
                 LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\zlib.dll" : "librdkafka\\x86\\zlib.dll"));
                 LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\librdkafkacpp.dll" : "librdkafka\\x86\\librdkafkacpp.dll"));
                 LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\libzstd.dll" : "librdkafka\\x86\\libzstd.dll"));
-                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\msvcp120.dll" : "librdkafka\\x86\\msvcp120.dll"));
-                LoadLibrary(Path.Combine(baseDirectory, is64 ? "librdkafka\\x64\\msvcr120.dll" : "librdkafka\\x86\\msvcr120.dll"));
+
+                var resolvingDll = Path.Combine(parentDirectory, is64 ? "librdkafka\\x64\\librdkafka.dll" : "librdkafka\\x86\\librdkafka.dll");
+                log.LogInformation(resolvingDll);
+                LoadLibrary(resolvingDll);
             }
             catch (Exception) { }
 
